@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import Header from "./components/Header";
-import BottomNav from "./components/BottomNav";
+import BottomNav, { SideNav } from "./components/BottomNav";
 import HomeView from "./components/HomeView";
 import ChatView from "./components/ChatView";
 import WeatherWidget from "./components/WeatherWidget";
@@ -10,10 +10,13 @@ import PestCard from "./components/PestCard";
 import FertCard from "./components/FertCard";
 import IrrigCard from "./components/IrrigCard";
 import { Button, Card, Select } from "./components/UI";
+import { Wheat, Shield, Beaker, Droplet, ArrowRight, MapPin } from "./components/Icons";
 
 import { useVoice } from "./hooks/useVoice";
 import { get, post } from "./lib/api";
 import { CROPS, LANGUAGES, LOCATIONS, SOILS, STAGES } from "./lib/constants";
+
+const THEME_KEY = "km-theme";
 
 export default function App() {
   const [tab, setTab] = useState("home");
@@ -30,6 +33,16 @@ export default function App() {
 
   const [lang, setLang] = useState("en");
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") return "light";
+    return localStorage.getItem(THEME_KEY) || (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  });
+
+  // Persist + apply theme
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem(THEME_KEY, theme);
+  }, [theme]);
 
   const voice = useVoice(lang);
   const currentLang = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
@@ -46,7 +59,7 @@ export default function App() {
       const data = await post(`/api/${endpoint}`, { ...body, language: lang });
       setResult({ type: endpoint.split("/")[0], data });
       await fetchWeather(body.location || loc);
-    } catch (e) { /* surfaced in UI through absence of result */ }
+    } catch (e) { /* swallow */ }
     setLoading(false);
   };
 
@@ -68,98 +81,146 @@ export default function App() {
     setLoading(false);
   };
 
-  const handleTabChange = (next) => { setTab(next); if (next !== tab) setResult(null); };
+  const handleTabChange = (next) => {
+    if (next === tab) return;
+    setTab(next);
+    setResult(null);
+  };
 
   return (
-    <div className="min-h-screen pb-24" style={{ color: "var(--text)" }}>
+    <div className="min-h-screen pb-24 sm:pb-6" style={{ color: "var(--text)" }}>
       <Header
         lang={lang}
         setLang={setLang}
         voiceEnabled={voiceEnabled}
         setVoiceEnabled={setVoiceEnabled}
         onSpeakGreeting={(l) => voiceEnabled && voice.speak(l.greeting)}
+        theme={theme}
+        setTheme={setTheme}
       />
 
-      <main className="max-w-lg mx-auto px-4 py-3 space-y-3">
-        <div>
-          <Select value={loc} onChange={setLoc} options={LOCATIONS} label="Location" />
-        </div>
+      <div className="max-w-5xl mx-auto sm:flex sm:gap-4 px-3 sm:px-6 sm:pt-2">
+        <SideNav tab={tab} onChange={handleTabChange} />
 
-        {tab === "home" && (
-          <HomeView weather={weather} onTab={handleTabChange} currentLang={currentLang} />
-        )}
+        <main className="flex-1 min-w-0 py-3 space-y-3">
+          <Card className="p-3">
+            <Select value={loc} onChange={setLoc} options={LOCATIONS} label="Location" icon={MapPin} />
+          </Card>
 
-        {tab === "crop" && (
-          <div className="space-y-3 fade-up">
-            <Card className="p-4 space-y-3">
-              <h2 className="font-display text-base font-bold">Find the best crops</h2>
-              <Select value={soil} onChange={setSoil} options={SOILS} label="Soil type" />
-              <Button onClick={() => run("crop/recommend", { location: loc, soil_type: soil })} loading={loading}>
-                Analyse
-              </Button>
-            </Card>
-            {weather && <WeatherWidget data={weather} />}
-            {result?.type === "crop" && <CropCard data={result.data} />}
-          </div>
-        )}
+          <div key={tab} className="tab-enter">
+            {tab === "home" && (
+              <HomeView weather={weather} onTab={handleTabChange} currentLang={currentLang} />
+            )}
 
-        {tab === "pest" && (
-          <div className="space-y-3 fade-up">
-            <Card className="p-4 space-y-3">
-              <h2 className="font-display text-base font-bold">Pest &amp; disease check</h2>
-              <Select value={crop} onChange={setCrop} options={CROPS} label="Your crop" />
-              <Button variant="warm" onClick={() => run("pesticide/advise", { crop, location: loc })} loading={loading}>
-                Check threats
-              </Button>
-            </Card>
-            {result?.type === "pesticide" && <PestCard data={result.data} />}
-          </div>
-        )}
-
-        {tab === "fert" && (
-          <div className="space-y-3 fade-up">
-            <Card className="p-4 space-y-3">
-              <h2 className="font-display text-base font-bold">Fertilizer plan</h2>
-              <div className="grid grid-cols-2 gap-2.5">
-                <Select value={crop} onChange={setCrop} options={CROPS} label="Crop" />
-                <Select value={stage} onChange={setStage} options={STAGES} label="Stage" />
+            {tab === "crop" && (
+              <div className="space-y-3">
+                <Card className="p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white"
+                         style={{ background: "linear-gradient(135deg, var(--primary-600), var(--primary-800))" }}>
+                      <Wheat size={16} />
+                    </div>
+                    <div>
+                      <h2 className="font-display text-base font-extrabold leading-none">Find the best crops</h2>
+                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>Soil + climate → top picks with confidence</p>
+                    </div>
+                  </div>
+                  <Select value={soil} onChange={setSoil} options={SOILS} label="Soil type" />
+                  <Button onClick={() => run("crop/recommend", { location: loc, soil_type: soil })} loading={loading} iconRight={ArrowRight}>
+                    Analyse
+                  </Button>
+                </Card>
+                {weather && <WeatherWidget data={weather} />}
+                {result?.type === "crop" && <CropCard data={result.data} />}
               </div>
-              <Button onClick={() => run("fertilizer/schedule", { crop, growth_stage: stage, location: loc })} loading={loading}>
-                Get schedule
-              </Button>
-            </Card>
-            {result?.type === "fertilizer" && <FertCard data={result.data} />}
-          </div>
-        )}
+            )}
 
-        {tab === "water" && (
-          <div className="space-y-3 fade-up">
-            <Card className="p-4 space-y-3">
-              <h2 className="font-display text-base font-bold">Irrigation plan</h2>
-              <div className="grid grid-cols-2 gap-2.5">
-                <Select value={crop} onChange={setCrop} options={CROPS} label="Crop" />
-                <Select value={stage} onChange={setStage} options={STAGES} label="Stage" />
+            {tab === "pest" && (
+              <div className="space-y-3">
+                <Card className="p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white"
+                         style={{ background: "linear-gradient(135deg, #d97706, #92400e)" }}>
+                      <Shield size={16} />
+                    </div>
+                    <div>
+                      <h2 className="font-display text-base font-extrabold leading-none">Pest &amp; disease check</h2>
+                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>Threat probabilities + spray windows</p>
+                    </div>
+                  </div>
+                  <Select value={crop} onChange={setCrop} options={CROPS} label="Your crop" />
+                  <Button variant="warm" onClick={() => run("pesticide/advise", { crop, location: loc })} loading={loading} iconRight={ArrowRight}>
+                    Check threats
+                  </Button>
+                </Card>
+                {result?.type === "pesticide" && <PestCard data={result.data} />}
               </div>
-              <Button onClick={() => run("irrigation/plan", { crop, growth_stage: stage, location: loc })} loading={loading}>
-                Calculate
-              </Button>
-            </Card>
-            {result?.type === "irrigation" && <IrrigCard data={result.data} />}
-          </div>
-        )}
+            )}
 
-        {tab === "chat" && (
-          <ChatView
-            history={chatHistory}
-            loading={loading}
-            chatInput={chatInput}
-            setChatInput={setChatInput}
-            onSend={sendChat}
-            voice={voice}
-            currentLang={currentLang}
-          />
-        )}
-      </main>
+            {tab === "fert" && (
+              <div className="space-y-3">
+                <Card className="p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white"
+                         style={{ background: "linear-gradient(135deg, #7c3aed, #4c1d95)" }}>
+                      <Beaker size={16} />
+                    </div>
+                    <div>
+                      <h2 className="font-display text-base font-extrabold leading-none">Fertilizer plan</h2>
+                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>NPK options + rain-aware schedule</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <Select value={crop} onChange={setCrop} options={CROPS} label="Crop" />
+                    <Select value={stage} onChange={setStage} options={STAGES} label="Stage" />
+                  </div>
+                  <Button onClick={() => run("fertilizer/schedule", { crop, growth_stage: stage, location: loc })} loading={loading} iconRight={ArrowRight}>
+                    Get schedule
+                  </Button>
+                </Card>
+                {result?.type === "fertilizer" && <FertCard data={result.data} />}
+              </div>
+            )}
+
+            {tab === "water" && (
+              <div className="space-y-3">
+                <Card className="p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white"
+                         style={{ background: "linear-gradient(135deg, var(--sky-600), #075985)" }}>
+                      <Droplet size={16} />
+                    </div>
+                    <div>
+                      <h2 className="font-display text-base font-extrabold leading-none">Irrigation plan</h2>
+                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>Penman–Monteith ET₀ + daily deficit</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <Select value={crop} onChange={setCrop} options={CROPS} label="Crop" />
+                    <Select value={stage} onChange={setStage} options={STAGES} label="Stage" />
+                  </div>
+                  <Button onClick={() => run("irrigation/plan", { crop, growth_stage: stage, location: loc })} loading={loading} iconRight={ArrowRight}>
+                    Calculate
+                  </Button>
+                </Card>
+                {result?.type === "irrigation" && <IrrigCard data={result.data} />}
+              </div>
+            )}
+
+            {tab === "chat" && (
+              <ChatView
+                history={chatHistory}
+                loading={loading}
+                chatInput={chatInput}
+                setChatInput={setChatInput}
+                onSend={sendChat}
+                voice={voice}
+                currentLang={currentLang}
+              />
+            )}
+          </div>
+        </main>
+      </div>
 
       <BottomNav tab={tab} onChange={handleTabChange} />
     </div>

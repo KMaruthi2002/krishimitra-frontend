@@ -1,35 +1,52 @@
-// Lightweight UI primitives shared across views.
 import { useEffect, useRef } from "react";
 
-export function Select({ value, onChange, options, label, hint }) {
+export function Select({ value, onChange, options, label, hint, icon: Icon }) {
   return (
     <label className="block">
-      {label && <span className="field-label">{label}</span>}
-      <select
-        className="select"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
+      {label && (
+        <span className="field-label flex items-center gap-1.5">
+          {Icon && <Icon size={12} />} {label}
+        </span>
+      )}
+      <select className="select" value={value} onChange={(e) => onChange(e.target.value)}>
         {options.map((o) => {
           const [v, l] = Array.isArray(o) ? o : [o, o];
           return <option key={v} value={v}>{l}</option>;
         })}
       </select>
-      {hint && <span className="block mt-1.5 text-[11px] text-[color:var(--text-dim)]">{hint}</span>}
+      {hint && <span className="block mt-1.5 text-[11px]" style={{ color: "var(--text-dim)" }}>{hint}</span>}
     </label>
   );
 }
 
-export function Button({ children, onClick, variant = "primary", loading, full = true, type = "button" }) {
+function rippleMouseMove(e) {
+  const r = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+  e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+}
+
+export function Button({ children, onClick, variant = "primary", loading, full = true, type = "button", iconRight: IconRight, iconLeft: IconLeft }) {
   const cls = { primary: "btn btn-primary", warm: "btn btn-warm", ghost: "btn btn-ghost" }[variant] || "btn btn-primary";
   return (
-    <button type={type} onClick={onClick} disabled={loading} className={`${cls} ${full ? "w-full" : ""}`}>
+    <button
+      type={type}
+      onClick={onClick}
+      onMouseMove={rippleMouseMove}
+      disabled={loading}
+      className={`${cls} ${full ? "w-full" : ""}`}
+    >
       {loading ? (
         <span className="flex items-center gap-2">
-          <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+          <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white" style={{ animation: "spinSlow .8s linear infinite" }} />
           Analysing…
         </span>
-      ) : children}
+      ) : (
+        <>
+          {IconLeft && <IconLeft size={16} />}
+          {children}
+          {IconRight && <IconRight size={16} />}
+        </>
+      )}
     </button>
   );
 }
@@ -47,38 +64,54 @@ export function SectionTitle({ children, right }) {
   );
 }
 
-export function Chip({ tone = "neutral", children }) {
-  const cls = { neutral: "chip", emerald: "chip chip-emerald", amber: "chip chip-amber", sky: "chip chip-sky", danger: "chip chip-danger" }[tone] || "chip";
-  return <span className={cls}>{children}</span>;
-}
-
-export function MetricTile({ label, value, unit, tone = "neutral" }) {
-  const map = {
-    neutral: { bg: "var(--surface-2)", fg: "var(--text)",    sub: "var(--text-dim)" },
-    emerald: { bg: "var(--primary-soft)", fg: "var(--primary-700)", sub: "var(--primary-700)" },
-    amber:   { bg: "var(--accent-soft)",  fg: "#92400e",             sub: "#92400e" },
-    sky:     { bg: "var(--sky-soft)",     fg: "#0c4a6e",             sub: "#0c4a6e" },
-    danger:  { bg: "var(--danger-soft)",  fg: "#991b1b",             sub: "#991b1b" },
-  }[tone];
-  return (
-    <div className="rounded-xl p-3 text-center" style={{ background: map.bg }}>
-      <div className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: map.sub, opacity: .8 }}>{label}</div>
-      <div className="text-xl font-bold metric-num mt-0.5" style={{ color: map.fg }}>{value}</div>
-      {unit && <div className="text-[10px]" style={{ color: map.sub, opacity: .7 }}>{unit}</div>}
-    </div>
-  );
+export function Chip({ tone = "neutral", children, className = "" }) {
+  const cls = {
+    neutral: "chip",
+    emerald: "chip chip-emerald",
+    amber:   "chip chip-amber",
+    sky:     "chip chip-sky",
+    violet:  "chip chip-violet",
+    danger:  "chip chip-danger",
+  }[tone] || "chip";
+  return <span className={`${cls} ${className}`}>{children}</span>;
 }
 
 export function ProgressBar({ value, tone = "emerald" }) {
   const colors = {
-    emerald: "linear-gradient(90deg, #10b981, #047857)",
-    amber:   "linear-gradient(90deg, #f59e0b, #b45309)",
-    danger:  "linear-gradient(90deg, #ef4444, #b91c1c)",
+    emerald: "linear-gradient(90deg, var(--primary-600), var(--primary-700))",
+    amber:   "linear-gradient(90deg, var(--accent-600), var(--accent))",
+    sky:     "linear-gradient(90deg, var(--sky-600), var(--sky))",
+    danger:  "linear-gradient(90deg, #ef4444, var(--danger))",
   };
   return (
-    <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: "var(--surface-3)" }}>
-      <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${Math.max(0, Math.min(100, value))}%`, background: colors[tone] }} />
+    <div className="w-full h-1.5 rounded-full overflow-hidden relative" style={{ background: "var(--surface-3)" }}>
+      <div
+        className="h-full rounded-full"
+        style={{
+          width: `${Math.max(0, Math.min(100, value))}%`,
+          background: colors[tone],
+          transition: "width .9s cubic-bezier(.2,.8,.2,1)",
+        }}
+      />
     </div>
+  );
+}
+
+export function Skeleton({ className = "h-4 w-full" }) {
+  return <div className={`skeleton ${className}`} />;
+}
+
+export function TypingDots() {
+  return (
+    <span className="inline-flex items-center gap-1">
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className="w-1.5 h-1.5 rounded-full"
+          style={{ background: "currentColor", animation: `bounce-dot 1.2s ${i * 0.15}s infinite ease-in-out` }}
+        />
+      ))}
+    </span>
   );
 }
 

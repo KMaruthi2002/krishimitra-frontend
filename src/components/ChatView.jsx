@@ -1,14 +1,16 @@
 import { useEffect, useRef } from "react";
-import { Card } from "./UI";
+import { Card, TypingDots } from "./UI";
 import WeatherWidget from "./WeatherWidget";
 import CropCard from "./CropCard";
 import PestCard from "./PestCard";
 import FertCard from "./FertCard";
 import IrrigCard from "./IrrigCard";
+import Waveform from "./Waveform";
+import { Mic, Stop, Send, Volume, Sparkle, Leaf } from "./Icons";
 
 const SUGGESTIONS = [
   "What crop for Mandya?",
-  "Rice pest risk in Shimoga",
+  "Rice pest risk Shimoga",
   "Fertilizer wheat flowering",
   "Maize water Pune",
   "Weather Bangalore",
@@ -27,25 +29,29 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
   };
 
   return (
-    <div className="space-y-3 fade-up pb-28">
+    <div className="space-y-3 fade-up pb-32 sm:pb-24">
       {history.length === 0 && (
-        <Card className="p-6 text-center">
-          <div className="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center text-2xl"
-               style={{ background: "var(--primary-soft)", color: "var(--primary-700)" }}>🌱</div>
-          <div className="font-display text-base font-bold mt-3" style={{ color: "var(--text)" }}>
-            Ask me anything about farming
+        <Card className="px-6 py-8 text-center card-elev slide-up">
+          <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-white relative overflow-hidden"
+               style={{ background: "linear-gradient(135deg, var(--primary-600), var(--primary-800))", boxShadow: "var(--shadow-lg)" }}>
+            <Leaf size={28} />
+            <span className="shine-sweep" style={{ animation: "shineSweep 3.5s ease-in-out infinite" }} />
           </div>
-          <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-            Voice or text · {currentLang.label}
+          <div className="font-display text-lg font-extrabold mt-4" style={{ color: "var(--text)" }}>
+            Ask KrishiMitra anything
           </div>
-          <div className="flex flex-wrap gap-1.5 mt-4 justify-center">
+          <div className="text-[12px] mt-1" style={{ color: "var(--text-muted)" }}>
+            Voice or text · Replies in {currentLang.label}
+          </div>
+
+          <div className="flex flex-wrap gap-1.5 mt-5 justify-center stagger">
             {SUGGESTIONS.map((q, i) => (
-              <button
-                key={i}
-                onClick={() => setChatInput(q)}
-                className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-colors"
-                style={{ background: "var(--primary-soft)", color: "var(--primary-700)", border: "1px solid #b8ead2" }}
-              >
+              <button key={i} onClick={() => setChatInput(q)}
+                className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all hover:-translate-y-0.5"
+                style={{
+                  background: "var(--primary-soft)", color: "var(--primary-700)",
+                  border: "1px solid color-mix(in srgb, var(--primary) 28%, transparent)",
+                }}>
                 {q}
               </button>
             ))}
@@ -53,39 +59,51 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
 
           <button
             onClick={handleMic}
-            className="mt-5 w-16 h-16 mx-auto rounded-full flex items-center justify-center text-2xl text-white relative transition-transform active:scale-95"
-            style={{ background: "linear-gradient(135deg, #059669, #047857)", boxShadow: "0 12px 30px -10px rgba(4,120,87,.55)" }}
+            className="mt-6 w-16 h-16 mx-auto rounded-full flex items-center justify-center text-white relative transition-transform active:scale-95 hover:scale-105"
+            style={{
+              background: voice.listening
+                ? "linear-gradient(135deg, var(--danger), #991b1b)"
+                : "linear-gradient(135deg, var(--primary-600), var(--primary-800))",
+              boxShadow: "0 16px 36px -10px color-mix(in srgb, var(--primary) 55%, transparent)",
+            }}
+            aria-label="Voice input"
           >
-            🎤
-            {voice.listening && (
-              <span className="absolute inset-0 rounded-full border-2 pulse-ring" style={{ borderColor: "var(--primary)" }} />
-            )}
+            {voice.listening ? <Waveform active color="#fff" size={22} /> : <Mic size={22} />}
+            {voice.listening && <span className="absolute inset-0 rounded-full border-2 pulse-ring" style={{ borderColor: "var(--danger)" }} />}
           </button>
-          <div className="text-[11px] mt-2" style={{ color: "var(--text-dim)" }}>
+          <div className="text-[11px] mt-2.5" style={{ color: "var(--text-dim)" }}>
             Tap to speak in {currentLang.label}
           </div>
         </Card>
       )}
 
       {history.map((m, i) => (
-        <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} fade-up`}>
+        <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} slide-up`}>
           <div
             className="max-w-[88%] px-3.5 py-2.5 rounded-2xl"
             style={
               m.role === "user"
-                ? { background: "linear-gradient(135deg, #059669, #047857)", color: "#ecfdf5", borderBottomRightRadius: 6 }
+                ? { background: "linear-gradient(135deg, var(--primary-600), var(--primary-800))", color: "#ecfdf5", borderBottomRightRadius: 6, boxShadow: "var(--shadow-sm)" }
                 : { background: "var(--surface)", border: "1px solid var(--border)", color: "var(--text)", borderBottomLeftRadius: 6, boxShadow: "var(--shadow-sm)" }
             }
           >
+            {m.role === "agent" && (
+              <div className="flex items-center gap-1.5 mb-1.5 -mt-0.5">
+                <Sparkle size={12} style={{ color: "var(--primary)" }} />
+                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--primary-700)" }}>
+                  KrishiMitra
+                </span>
+              </div>
+            )}
             <p className="text-sm whitespace-pre-wrap leading-relaxed">{m.text}</p>
 
             {m.role === "agent" && m.text && (
               <button
                 onClick={() => voice.speaking ? voice.stopSpeaking() : voice.speak(m.text)}
-                className="mt-2 px-2 py-1 rounded-md text-[10px] font-semibold inline-flex items-center gap-1"
+                className="mt-2 px-2 py-1 rounded-md text-[10px] font-semibold inline-flex items-center gap-1.5 transition-colors"
                 style={{ background: "var(--primary-soft)", color: "var(--primary-700)" }}
               >
-                {voice.speaking ? "⏹ Stop" : "🔊 Listen"}
+                {voice.speaking ? <><Stop size={11} /> Stop</> : <><Volume size={11} /> Listen</>}
               </button>
             )}
 
@@ -99,31 +117,31 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
       ))}
 
       {loading && (
-        <div className="flex justify-start">
-          <div className="px-3.5 py-2.5 rounded-2xl" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-            <span className="text-sm inline-flex items-center gap-2" style={{ color: "var(--text-muted)" }}>
-              <span className="w-3.5 h-3.5 rounded-full border-2 border-emerald-500/30 border-t-emerald-600 animate-spin" />
-              KrishiMitra is thinking…
-            </span>
+        <div className="flex justify-start fade-in">
+          <div className="px-3.5 py-2.5 rounded-2xl flex items-center gap-2"
+               style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)", color: "var(--primary-700)" }}>
+            <Sparkle size={12} style={{ color: "var(--primary)" }} />
+            <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>KrishiMitra</span>
+            <TypingDots />
           </div>
         </div>
       )}
 
       <div ref={endRef} />
 
-      <div className="fixed bottom-14 inset-x-0 px-3 pt-2 pb-2 glass safe-bottom z-40">
-        <div className="max-w-lg mx-auto flex gap-2 items-center">
-          <button
-            onClick={handleMic}
-            className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform active:scale-90 relative"
+      <div className="fixed bottom-14 sm:bottom-3 inset-x-0 px-3 pt-2 pb-2 safe-bottom z-40 glass">
+        <div className="max-w-3xl mx-auto flex gap-2 items-center">
+          <button onClick={handleMic}
+            className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform active:scale-90 relative flex-shrink-0"
             style={{
-              background: voice.listening ? "#dc2626" : "var(--surface)",
-              border: `1px solid ${voice.listening ? "#dc2626" : "var(--border)"}`,
+              background: voice.listening ? "var(--danger)" : "var(--surface)",
+              border: `1px solid ${voice.listening ? "var(--danger)" : "var(--border)"}`,
               color: voice.listening ? "#fff" : "var(--primary-700)",
             }}
+            aria-label={voice.listening ? "Stop listening" : "Voice input"}
           >
-            {voice.listening ? "■" : "🎤"}
-            {voice.listening && <span className="absolute inset-0 rounded-xl border-2 pulse-ring" style={{ borderColor: "#dc2626" }} />}
+            {voice.listening ? <Waveform active color="#fff" size={18} /> : <Mic size={18} />}
+            {voice.listening && <span className="absolute inset-0 rounded-xl border-2 pulse-ring" style={{ borderColor: "var(--danger)" }} />}
           </button>
           <input
             value={chatInput}
@@ -132,12 +150,10 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
             placeholder={`Speak or type in ${currentLang.label}…`}
             className="input"
           />
-          <button
-            onClick={() => onSend()}
-            disabled={loading || !chatInput.trim()}
-            className="btn btn-primary px-4"
-            style={{ minWidth: 70 }}
-          >Send</button>
+          <button onClick={() => onSend()} disabled={loading || !chatInput.trim()}
+            className="btn btn-primary px-4 flex-shrink-0" style={{ minWidth: 56 }} aria-label="Send">
+            <Send size={16} />
+          </button>
         </div>
       </div>
     </div>
