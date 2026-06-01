@@ -84,7 +84,7 @@ function AppShell({ lang, setLang }) {
       const aiText = r.ai_response || (r.type === "clarification" ? r.response : "");
       setChatHistory((h) => [...h, { role: "agent", text: aiText || t("chat.fallback_response"), data: r }]);
       if (r.weather) setWeather(r.weather);
-      if (voiceEnabled && aiText) voice.speak(aiText);
+      // No auto-speak — user can tap the "Listen" button on each agent message.
     } catch (e) {
       setChatHistory((h) => [...h, { role: "agent", text: t("chat.connection_error") }]);
     }

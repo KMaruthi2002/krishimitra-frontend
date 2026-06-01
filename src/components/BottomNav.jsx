@@ -34,7 +34,7 @@ export default function BottomNav({ tab, onChange }) {
         {TABS.map((tab_) => {
           const active = tab === tab_.id;
           const Icon = ICONS[tab_.icon] || Home;
-          const label = t(tab_.labelKey);
+          const label = (tab_.labelKey ? t(tab_.labelKey) : tab_.label);
           return (
             <button
               key={tab_.id}
@@ -87,7 +87,7 @@ export function SideNav({ tab, onChange }) {
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               color: active ? "var(--primary)" : "var(--text-muted)",
             }}>
-              {t(tab_.labelKey)}
+              {(tab_.labelKey ? t(tab_.labelKey) : tab_.label)}
             </span>
           </button>
         );

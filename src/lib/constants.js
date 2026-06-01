@@ -35,11 +35,13 @@ export const LANGUAGES = [
   { code: "mr", label: "मराठी",    voice: "mr-IN", flag: "म",  greeting: "नमस्कार! मी कृषिमित्र, तुमचा शेती सल्लागार." },
 ];
 
+// `labelKey` resolves through the i18n dictionary so tab labels translate.
+// `label` is kept as a hardcoded English fallback in case i18n is bypassed.
 export const TABS = [
-  { id: "home",  icon: "Home",   label: "Home"    },
-  { id: "crop",  icon: "Crop",   label: "Crops"   },
-  { id: "pest",  icon: "Pest",   label: "Protect" },
-  { id: "fert",  icon: "Fert",   label: "Fert"    },
-  { id: "water", icon: "Water",  label: "Water"   },
-  { id: "chat",  icon: "Chat",   label: "Ask"     },
+  { id: "home",  icon: "Home",   labelKey: "tabs.home",    label: "Home"    },
+  { id: "crop",  icon: "Crop",   labelKey: "tabs.crops",   label: "Crops"   },
+  { id: "pest",  icon: "Pest",   labelKey: "tabs.protect", label: "Protect" },
+  { id: "fert",  icon: "Fert",   labelKey: "tabs.fert",    label: "Fert"    },
+  { id: "water", icon: "Water",  labelKey: "tabs.water",   label: "Water"   },
+  { id: "chat",  icon: "Chat",   labelKey: "tabs.ask",     label: "Ask"     },
 ];
