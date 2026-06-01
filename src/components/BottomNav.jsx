@@ -81,7 +81,7 @@ export function SideNav({ tab, onChange }) {
           >
             {active && <span style={{ position: "absolute", left: 0, top: 8, bottom: 8, width: 3, background: "var(--primary)", borderRadius: 999 }} />}
             <Icon size={18} />
-            {t(tab_.labelKey)}
+            <span className="flex-1 truncate">{t(tab_.labelKey)}</span>
           </button>
         );
       })}

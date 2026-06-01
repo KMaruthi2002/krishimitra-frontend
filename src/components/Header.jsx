@@ -159,10 +159,6 @@ export default function Header({ lang, setLang, voiceEnabled, setVoiceEnabled, o
           )}
         </div>
 
-        <button onClick={() => setVoiceEnabled(!voiceEnabled)} aria-label="Toggle voice" className={`btn-icon ${voiceEnabled ? "btn-icon-active" : ""}`}>
-          {voiceEnabled ? <Volume size={16} /> : <VolumeX size={16} />}
-        </button>
-
         <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle theme" className="btn-icon" style={{ position: "relative", overflow: "hidden" }}>
           <span style={{
             display: "inline-flex", transition: "transform .4s var(--ease-spring), opacity .25s ease",
