@@ -10,11 +10,11 @@ import PestCard from "./components/PestCard";
 import FertCard from "./components/FertCard";
 import IrrigCard from "./components/IrrigCard";
 import { Button, Card, Select } from "./components/UI";
-import { Wheat, Shield, Beaker, Droplet, ArrowRight, MapPin } from "./components/Icons";
+import { Wheat, Shield, Beaker, Droplet, ArrowRight } from "./components/Icons";
 
 import { useVoice } from "./hooks/useVoice";
 import { get, post } from "./lib/api";
-import { CROPS, LANGUAGES, LOCATIONS, SOILS, STAGES } from "./lib/constants";
+import { CROPS, LANGUAGES, SOILS, STAGES } from "./lib/constants";
 
 const THEME_KEY = "km-theme";
 
@@ -97,16 +97,14 @@ export default function App() {
         onSpeakGreeting={(l) => voiceEnabled && voice.speak(l.greeting)}
         theme={theme}
         setTheme={setTheme}
+        loc={loc}
+        setLoc={setLoc}
       />
 
       <div className="max-w-5xl mx-auto sm:flex sm:gap-4 px-3 sm:px-6 sm:pt-2">
         <SideNav tab={tab} onChange={handleTabChange} />
 
         <main className="flex-1 min-w-0 py-3 space-y-3">
-          <Card className="p-3">
-            <Select value={loc} onChange={setLoc} options={LOCATIONS} label="Location" icon={MapPin} />
-          </Card>
-
           <div key={tab} className="tab-enter">
             {tab === "home" && (
               <HomeView weather={weather} onTab={handleTabChange} currentLang={currentLang} />

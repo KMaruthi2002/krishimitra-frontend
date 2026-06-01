@@ -1,8 +1,87 @@
 import { useEffect, useState } from "react";
-import { LANGUAGES } from "../lib/constants";
-import { Leaf, Globe, Volume, VolumeX, Sun, Moon, ChevronDown } from "./Icons";
+import { LANGUAGES, LOCATIONS } from "../lib/constants";
+import { Leaf, Globe, Volume, VolumeX, Sun, Moon, ChevronDown, MapPin } from "./Icons";
 
-export default function Header({ lang, setLang, voiceEnabled, setVoiceEnabled, onSpeakGreeting, theme, setTheme }) {
+function LocationPicker({ loc, setLoc }) {
+  const [open, setOpen] = useState(false);
+  const [filter, setFilter] = useState("");
+
+  useEffect(() => {
+    function onDoc(e) {
+      if (!e.target.closest?.("[data-loc-pop]")) { setOpen(false); setFilter(""); }
+    }
+    if (open) document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+
+  const matches = LOCATIONS.filter((l) => l.toLowerCase().includes(filter.toLowerCase()));
+
+  return (
+    <div className="relative" data-loc-pop>
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors"
+        style={{
+          background: "var(--primary-soft)",
+          color: "var(--primary)",
+          border: "1px solid color-mix(in srgb, var(--primary) 28%, transparent)",
+          height: 38,
+        }}
+        aria-label="Change location"
+      >
+        <MapPin size={13} />
+        <span className="truncate max-w-[120px]">{loc}</span>
+        <ChevronDown size={12} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .25s ease" }} />
+      </button>
+
+      {open && (
+        <div className="absolute left-0 sm:left-auto sm:right-0 mt-2 w-[260px] slide-up glass-strong"
+             style={{ borderRadius: 14, boxShadow: "var(--shadow-md)", zIndex: 60 }}>
+          <div className="p-2">
+            <div className="relative">
+              <MapPin size={12} style={{ position: "absolute", left: 10, top: 11, color: "var(--text-dim)" }} />
+              <input
+                value={filter}
+                autoFocus
+                onChange={(e) => setFilter(e.target.value)}
+                placeholder="Search location…"
+                className="w-full pl-7 pr-2 py-1.5 text-[12px] font-medium rounded-lg"
+                style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--text)", outline: "none" }}
+              />
+            </div>
+          </div>
+          <div className="max-h-[280px] overflow-y-auto py-1 stagger">
+            {matches.length === 0 && (
+              <div className="px-3 py-3 text-[11px]" style={{ color: "var(--text-dim)" }}>No matches</div>
+            )}
+            {matches.map((l) => {
+              const active = l === loc;
+              return (
+                <button
+                  key={l}
+                  onClick={() => { setLoc(l); setOpen(false); setFilter(""); }}
+                  className="w-full px-3 py-2 text-left flex items-center gap-2.5 text-sm font-semibold transition-colors"
+                  style={{
+                    background: active ? "var(--primary-soft)" : "transparent",
+                    color: active ? "var(--primary)" : "var(--text)",
+                  }}
+                  onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = "var(--hover)"; }}
+                  onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = "transparent"; }}
+                >
+                  <MapPin size={13} style={{ color: active ? "var(--primary)" : "var(--text-dim)" }} />
+                  <span className="flex-1">{l}</span>
+                  {active && <span className="text-[10px] font-bold" style={{ color: "var(--primary)" }}>SELECTED</span>}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Header({ lang, setLang, voiceEnabled, setVoiceEnabled, onSpeakGreeting, theme, setTheme, loc, setLoc }) {
   const [open, setOpen] = useState(false);
   const current = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
@@ -16,22 +95,29 @@ export default function Header({ lang, setLang, voiceEnabled, setVoiceEnabled, o
 
   return (
     <header className="sticky top-0 z-50 glass">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white relative overflow-hidden"
                style={{ background: "linear-gradient(135deg, var(--primary-600), var(--primary-800))",
                         boxShadow: "0 10px 22px -10px color-mix(in srgb, var(--primary) 60%, transparent), inset 0 1px 0 rgba(255,255,255,.15)" }}>
             <Leaf size={20} />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 hidden xs:block">
             <h1 className="font-display text-[17px] font-extrabold tracking-tight leading-none">KrishiMitra</h1>
-            <div className="flex items-center gap-1.5 mt-1">
+            <div className="hidden sm:flex items-center gap-1.5 mt-1">
               <span className="text-[10px] font-semibold uppercase tracking-[.16em]" style={{ color: "var(--text-dim)" }}>कृषि मित्र</span>
               <span className="w-1 h-1 rounded-full" style={{ background: "var(--text-faint)" }} />
               <span className="text-[10px] font-semibold uppercase tracking-[.12em]" style={{ color: "var(--text-dim)" }}>Farming advisor</span>
             </div>
           </div>
         </div>
+
+        {/* Centralized location pill */}
+        {loc && setLoc && (
+          <div className="ml-1 sm:ml-2">
+            <LocationPicker loc={loc} setLoc={setLoc} />
+          </div>
+        )}
 
         <div className="flex-1" />
 

@@ -107,7 +107,10 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
               </button>
             )}
 
-            {m.data?.weather && <div className="mt-3"><WeatherWidget data={m.data.weather} /></div>}
+            {/* Only attach the weather widget when the user actually asked about weather */}
+            {m.data?.weather && m.data?.intent === "weather_forecast" && (
+              <div className="mt-3"><WeatherWidget data={m.data.weather} /></div>
+            )}
             {m.data?.advisories?.crop && <div className="mt-3"><CropCard data={m.data.advisories.crop} /></div>}
             {m.data?.advisories?.pesticide && <div className="mt-3"><PestCard data={m.data.advisories.pesticide} /></div>}
             {m.data?.advisories?.fertilizer && <div className="mt-3"><FertCard data={m.data.advisories.fertilizer} /></div>}
