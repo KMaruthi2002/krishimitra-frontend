@@ -15,10 +15,21 @@ import { Wheat, Shield, Beaker, Droplet, ArrowRight } from "./components/Icons";
 import { useVoice } from "./hooks/useVoice";
 import { get, post } from "./lib/api";
 import { CROPS, LANGUAGES, SOILS, STAGES } from "./lib/constants";
+import { I18nProvider, useT } from "./lib/I18nContext";
 
 const THEME_KEY = "km-theme";
 
 export default function App() {
+  const [lang, setLang] = useState("en");
+  return (
+    <I18nProvider lang={lang}>
+      <AppShell lang={lang} setLang={setLang} />
+    </I18nProvider>
+  );
+}
+
+function AppShell({ lang, setLang }) {
+  const { t } = useT();
   const [tab, setTab] = useState("home");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -31,7 +42,6 @@ export default function App() {
   const [soil, setSoil] = useState("loamy");
   const [stage, setStage] = useState("development");
 
-  const [lang, setLang] = useState("en");
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [theme, setTheme] = useState(() => {
     if (typeof window === "undefined") return "light";
@@ -72,11 +82,11 @@ export default function App() {
     try {
       const r = await post("/api/query", { message: msg, language: lang });
       const aiText = r.ai_response || (r.type === "clarification" ? r.response : "");
-      setChatHistory((h) => [...h, { role: "agent", text: aiText || "Here's what I found from your latest weather and farm data.", data: r }]);
+      setChatHistory((h) => [...h, { role: "agent", text: aiText || t("chat.fallback_response"), data: r }]);
       if (r.weather) setWeather(r.weather);
       if (voiceEnabled && aiText) voice.speak(aiText);
     } catch (e) {
-      setChatHistory((h) => [...h, { role: "agent", text: "Connection error. Please try again." }]);
+      setChatHistory((h) => [...h, { role: "agent", text: t("chat.connection_error") }]);
     }
     setLoading(false);
   };
@@ -119,13 +129,13 @@ export default function App() {
                       <Wheat size={16} />
                     </div>
                     <div>
-                      <h2 className="font-display text-base font-extrabold leading-none">Find the best crops</h2>
-                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>Soil + climate → top picks with confidence</p>
+                      <h2 className="font-display text-base font-extrabold leading-none">{t("crop.find_title")}</h2>
+                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>{t("crop.find_subtitle")}</p>
                     </div>
                   </div>
-                  <Select value={soil} onChange={setSoil} options={SOILS} label="Soil type" />
+                  <Select value={soil} onChange={setSoil} options={SOILS.map(([v]) => [v, t(`soil.${v}`)])} label={t("crop.soil_type")} />
                   <Button onClick={() => run("crop/recommend", { location: loc, soil_type: soil })} loading={loading} iconRight={ArrowRight}>
-                    Analyse
+                    {t("crop.analyse")}
                   </Button>
                 </Card>
                 {weather && <WeatherWidget data={weather} />}
@@ -142,13 +152,13 @@ export default function App() {
                       <Shield size={16} />
                     </div>
                     <div>
-                      <h2 className="font-display text-base font-extrabold leading-none">Pest &amp; disease check</h2>
-                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>Threat probabilities + spray windows</p>
+                      <h2 className="font-display text-base font-extrabold leading-none">{t("pest.title")}</h2>
+                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>{t("pest.subtitle")}</p>
                     </div>
                   </div>
-                  <Select value={crop} onChange={setCrop} options={CROPS} label="Your crop" />
+                  <Select value={crop} onChange={setCrop} options={CROPS} label={t("pest.your_crop")} />
                   <Button variant="warm" onClick={() => run("pesticide/advise", { crop, location: loc })} loading={loading} iconRight={ArrowRight}>
-                    Check threats
+                    {t("pest.check_threats")}
                   </Button>
                 </Card>
                 {result?.type === "pesticide" && <PestCard data={result.data} />}
@@ -164,16 +174,16 @@ export default function App() {
                       <Beaker size={16} />
                     </div>
                     <div>
-                      <h2 className="font-display text-base font-extrabold leading-none">Fertilizer plan</h2>
-                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>NPK options + rain-aware schedule</p>
+                      <h2 className="font-display text-base font-extrabold leading-none">{t("fert.title")}</h2>
+                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>{t("fert.subtitle")}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2.5">
-                    <Select value={crop} onChange={setCrop} options={CROPS} label="Crop" />
-                    <Select value={stage} onChange={setStage} options={STAGES} label="Stage" />
+                    <Select value={crop} onChange={setCrop} options={CROPS} label={t("fert.crop")} />
+                    <Select value={stage} onChange={setStage} options={STAGES.map(([v]) => [v, t(`stage.${v}`)])} label={t("fert.stage")} />
                   </div>
                   <Button onClick={() => run("fertilizer/schedule", { crop, growth_stage: stage, location: loc })} loading={loading} iconRight={ArrowRight}>
-                    Get schedule
+                    {t("fert.get_schedule")}
                   </Button>
                 </Card>
                 {result?.type === "fertilizer" && <FertCard data={result.data} />}
@@ -189,16 +199,16 @@ export default function App() {
                       <Droplet size={16} />
                     </div>
                     <div>
-                      <h2 className="font-display text-base font-extrabold leading-none">Irrigation plan</h2>
-                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>Penman–Monteith ET₀ + daily deficit</p>
+                      <h2 className="font-display text-base font-extrabold leading-none">{t("irrig.title")}</h2>
+                      <p className="text-[11px] mt-1" style={{ color: "var(--text-dim)" }}>{t("irrig.subtitle")}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2.5">
-                    <Select value={crop} onChange={setCrop} options={CROPS} label="Crop" />
-                    <Select value={stage} onChange={setStage} options={STAGES} label="Stage" />
+                    <Select value={crop} onChange={setCrop} options={CROPS} label={t("fert.crop")} />
+                    <Select value={stage} onChange={setStage} options={STAGES.map(([v]) => [v, t(`stage.${v}`)])} label={t("fert.stage")} />
                   </div>
                   <Button onClick={() => run("irrigation/plan", { crop, growth_stage: stage, location: loc })} loading={loading} iconRight={ArrowRight}>
-                    Calculate
+                    {t("irrig.calculate")}
                   </Button>
                 </Card>
                 {result?.type === "irrigation" && <IrrigCard data={result.data} />}

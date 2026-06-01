@@ -1,7 +1,9 @@
 import { Card, Chip, SectionTitle } from "./UI";
 import { Shield, Alert, Calendar, Check, X } from "./Icons";
+import { useT } from "../lib/I18nContext";
 
 export default function PestCard({ data }) {
+  const { t } = useT();
   if (!data) return null;
   const pests = data.risks?.pests || [];
   const diseases = data.risks?.diseases || [];
@@ -12,9 +14,9 @@ export default function PestCard({ data }) {
     <Card className="overflow-hidden card-elev slide-up">
       <div className="px-4 pt-4 pb-3">
         <div className="eyebrow flex items-center gap-1.5" style={{ color: "var(--text-dim)" }}>
-          <Shield size={11} /> Protection
+          <Shield size={11} /> {t("pest.protection")}
         </div>
-        <div className="font-display text-lg font-extrabold mt-1">{data.crop} threats &amp; spray plan</div>
+        <div className="font-display text-lg font-extrabold mt-1">{t("pest.threats_and_plan", { crop: data.crop })}</div>
       </div>
       <div className="divider" />
 
@@ -23,7 +25,7 @@ export default function PestCard({ data }) {
           <div className="rounded-xl p-3" style={{ background: "var(--danger-soft)", border: "1px solid color-mix(in srgb, var(--danger) 25%, transparent)" }}>
             <div className="flex items-center gap-2 mb-2">
               <Alert size={14} style={{ color: "var(--danger)" }} />
-              <SectionTitle>Active threats</SectionTitle>
+              <SectionTitle>{t("pest.active_threats")}</SectionTitle>
             </div>
             <div className="space-y-2">
               {pests.map((p, i) => {
@@ -60,11 +62,11 @@ export default function PestCard({ data }) {
                   <span className="font-semibold metric-num">{r.dosage}/L</span> · {r.category?.replace(/_/g, " ")} · for {r.for_threat?.replace(/_/g, " ")}
                 </div>
                 <div className="text-[11px] mt-0.5" style={{ color: "var(--text-dim)" }}>
-                  Rain-free needed: <span className="metric-num font-semibold">{r.rain_free_hours}h</span>
+                  {t("pest.rain_free", { hours: r.rain_free_hours })}
                 </div>
               </div>
               <Chip tone={r.safe_to_spray ? "emerald" : "amber"} className="chip-dot">
-                {r.safe_to_spray ? "Safe now" : "Caution"}
+                {r.safe_to_spray ? t("pest.safe_now") : t("pest.caution")}
               </Chip>
             </div>
           </div>
@@ -74,7 +76,7 @@ export default function PestCard({ data }) {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Calendar size={13} style={{ color: "var(--primary)" }} />
-              <SectionTitle>Spray calendar — this week</SectionTitle>
+              <SectionTitle>{t("pest.spray_calendar")}</SectionTitle>
             </div>
             <div className="grid grid-cols-7 gap-1.5 stagger">
               {wins.map((w, i) => (

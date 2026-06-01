@@ -1,18 +1,20 @@
 import { Card, Chip, SectionTitle } from "./UI";
 import { Beaker, Calendar, Check, X, ChevronRight } from "./Icons";
+import { useT } from "../lib/I18nContext";
 
 export default function FertCard({ data }) {
+  const { t } = useT();
   if (!data) return null;
 
   return (
     <Card className="overflow-hidden card-elev slide-up">
       <div className="px-4 pt-4 pb-3">
         <div className="eyebrow flex items-center gap-1.5" style={{ color: "var(--text-dim)" }}>
-          <Beaker size={11} /> Fertilizer
+          <Beaker size={11} /> {t("fert.fertilizer")}
         </div>
-        <div className="font-display text-lg font-extrabold mt-1">{data.crop} nutrition plan</div>
+        <div className="font-display text-lg font-extrabold mt-1">{t("fert.nutrition_plan", { crop: data.crop })}</div>
         <div className="mt-1.5 flex gap-1.5">
-          {data.growth_stage && <Chip tone="violet">{data.growth_stage.replace(/_/g, " ")}</Chip>}
+          {data.growth_stage && <Chip tone="violet">{t(`stage.${data.growth_stage}`)}</Chip>}
         </div>
       </div>
       <div className="divider" />
@@ -38,7 +40,7 @@ export default function FertCard({ data }) {
               </div>
             </div>
             <Chip tone={f.safe_to_apply ? "emerald" : "danger"} className="chip-dot">
-              {f.safe_to_apply ? "Apply" : "Wait"}
+              {f.safe_to_apply ? t("fert.apply") : t("fert.wait")}
             </Chip>
           </div>
         ))}
@@ -47,7 +49,7 @@ export default function FertCard({ data }) {
           <div className="pt-1">
             <div className="flex items-center gap-2 mb-2">
               <Calendar size={13} style={{ color: "var(--primary)" }} />
-              <SectionTitle>Next 7 days</SectionTitle>
+              <SectionTitle>{t("fert.next_7_days")}</SectionTitle>
             </div>
             <div className="space-y-1.5">
               {data.daily_plan.slice(0, 7).map((d, i) => {

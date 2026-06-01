@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useT } from "../lib/I18nContext";
 
 export function Select({ value, onChange, options, label, hint, icon: Icon }) {
   return (
@@ -26,6 +27,7 @@ function rippleMouseMove(e) {
 }
 
 export function Button({ children, onClick, variant = "primary", loading, full = true, type = "button", iconRight: IconRight, iconLeft: IconLeft }) {
+  const { t } = useT();
   const cls = { primary: "btn btn-primary", warm: "btn btn-warm", ghost: "btn btn-ghost" }[variant] || "btn btn-primary";
   return (
     <button
@@ -38,7 +40,7 @@ export function Button({ children, onClick, variant = "primary", loading, full =
       {loading ? (
         <span className="flex items-center gap-2">
           <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white" style={{ animation: "spinSlow .8s linear infinite" }} />
-          Analysing…
+          {t("common.analysing")}
         </span>
       ) : (
         <>

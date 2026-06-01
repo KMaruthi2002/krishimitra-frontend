@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { MapPin, WxSunny, WxCloud, WxRain, WxStorm, WxPartly, Sparkle } from "./Icons";
 import { Chip } from "./UI";
 import AnimatedNumber from "./AnimatedNumber";
+import { useT } from "../lib/I18nContext";
 
 function bigIcon(rain, humidity) {
   if (rain > 20) return <WxStorm size={60} />;
@@ -11,15 +12,16 @@ function bigIcon(rain, humidity) {
   return <WxSunny size={60} />;
 }
 
-function summarise(s, rain) {
-  if (rain > 20) return "Heavy rain — irrigation off, drainage check";
-  if (rain > 5)  return "Wet week — plan spray windows carefully";
-  if (rain > 0.5) return "Mixed conditions — moderate humidity, light showers";
-  if ((s.humidity_avg ?? 0) > 70) return "Cloudy & humid — fungal risk elevated";
-  return "Clear & dry — good window for field work";
+function summariseKey(s, rain) {
+  if (rain > 20) return "hero.heavy_rain";
+  if (rain > 5)  return "hero.wet_week";
+  if (rain > 0.5) return "hero.mixed";
+  if ((s.humidity_avg ?? 0) > 70) return "hero.cloudy_humid";
+  return "hero.clear_dry";
 }
 
 export default function Hero({ weather }) {
+  const { t } = useT();
   const [glow, setGlow] = useState({ x: 50, y: 30 });
   const ref = useRef(null);
 
@@ -73,7 +75,7 @@ export default function Hero({ weather }) {
             <MapPin size={12} /> {weather.location}
           </div>
           <Chip tone={live ? "emerald" : "amber"} className="chip-dot">
-            {live ? "Live" : "Estimate"}
+            {live ? t("weather.live") : t("weather.estimate")}
           </Chip>
         </div>
 
@@ -86,8 +88,10 @@ export default function Hero({ weather }) {
               <span className="font-display font-black metric-num" style={{ fontSize: 30, color: "var(--text-dim)" }}>°C</span>
             </div>
             <div className="text-[11px] mt-1 metric-num" style={{ color: "var(--text-muted)" }}>
-              low <AnimatedNumber value={today.temp_min ?? s.temp_min ?? 0} />° ·{" "}
-              <AnimatedNumber value={today.humidity ?? s.humidity_avg ?? 0} />% humidity
+              {t("hero.feels_low", {
+                min: Math.round(today.temp_min ?? s.temp_min ?? 0),
+                humid: Math.round(today.humidity ?? s.humidity_avg ?? 0),
+              })}
             </div>
           </div>
           <div style={{ color: "var(--accent)" }} className="float-y">
@@ -99,7 +103,7 @@ export default function Hero({ weather }) {
              style={{ background: "color-mix(in srgb, var(--primary) 6%, var(--surface))", border: "1px solid var(--border)" }}>
           <Sparkle size={14} style={{ color: "var(--primary)" }} />
           <p className="text-[12.5px] font-semibold leading-snug" style={{ color: "var(--text)" }}>
-            {summarise(s, rain)}
+            {t(summariseKey(s, rain))}
           </p>
         </div>
       </div>

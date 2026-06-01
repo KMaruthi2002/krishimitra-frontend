@@ -2,6 +2,7 @@ import { Card, Chip } from "./UI";
 import { MapPin, WxSunny, WxCloud, WxRain, WxStorm, WxPartly, Wind, Droplet, Thermometer, Activity } from "./Icons";
 import WeatherChart from "./WeatherChart";
 import AnimatedNumber from "./AnimatedNumber";
+import { useT } from "../lib/I18nContext";
 
 function WxIcon({ rain, humidity, size = 18 }) {
   if (rain > 20) return <WxStorm size={size} className="fg-sky" />;
@@ -31,6 +32,7 @@ function Stat({ icon: Icon, label, value, unit, tone = "neutral", anim = true, i
 }
 
 export default function WeatherWidget({ data }) {
+  const { t } = useT();
   if (!data?.daily) return null;
   const s = data.summary || {};
   const live = data.source === "open_meteo_live";
@@ -40,23 +42,23 @@ export default function WeatherWidget({ data }) {
       <div className="px-4 pt-4 pb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 eyebrow" style={{ color: "var(--text-dim)" }}>
-            <MapPin size={12} /> Forecast
+            <MapPin size={12} /> {t("weather.forecast")}
           </div>
           <div className="font-display text-xl font-extrabold mt-1 truncate">{data.location}</div>
           <div className="text-[11px] mt-0.5" style={{ color: "var(--text-dim)" }}>
-            {data.forecast_days}-day outlook · Open-Meteo
+            {t("weather.outlook", { days: data.forecast_days })}
           </div>
         </div>
         <Chip tone={live ? "emerald" : "amber"} className="chip-dot">
-          {live ? "Live" : "Est."}
+          {live ? t("weather.live") : t("weather.estimate")}
         </Chip>
       </div>
 
       <div className="px-3 pb-3 flex gap-2 stagger">
-        <Stat icon={Thermometer} label="Range"    value={`${s.temp_min ?? "–"}–${s.temp_max ?? "–"}°`} anim={false} tone="amber" />
-        <Stat icon={Droplet}     label="Humidity" value={s.humidity_avg ?? 0}   unit="%"     tone="emerald" />
-        <Stat icon={Activity}    label="Rain"     value={s.rainfall_total ?? 0} unit="mm"    tone="sky" />
-        <Stat icon={Wind}        label="Wind"     value={s.wind_speed_avg ?? 0} unit="km/h" />
+        <Stat icon={Thermometer} label={t("weather.range")}    value={`${s.temp_min ?? "–"}–${s.temp_max ?? "–"}°`} anim={false} tone="amber" />
+        <Stat icon={Droplet}     label={t("weather.humidity")} value={s.humidity_avg ?? 0}   unit="%"     tone="emerald" />
+        <Stat icon={Activity}    label={t("weather.rain")}     value={s.rainfall_total ?? 0} unit="mm"    tone="sky" />
+        <Stat icon={Wind}        label={t("weather.wind")}     value={s.wind_speed_avg ?? 0} unit="km/h" />
       </div>
 
       <div className="px-2 pb-1">

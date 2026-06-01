@@ -7,16 +7,12 @@ import FertCard from "./FertCard";
 import IrrigCard from "./IrrigCard";
 import Waveform from "./Waveform";
 import { Mic, Stop, Send, Volume, Sparkle, Leaf } from "./Icons";
+import { useT } from "../lib/I18nContext";
 
-const SUGGESTIONS = [
-  "What crop for Mandya?",
-  "Rice pest risk Shimoga",
-  "Fertilizer wheat flowering",
-  "Maize water Pune",
-  "Weather Bangalore",
-];
+const SUGGEST_KEYS = ["chat.suggest.crop", "chat.suggest.pest", "chat.suggest.fert", "chat.suggest.water", "chat.suggest.weather"];
 
 export default function ChatView({ history, loading, chatInput, setChatInput, onSend, voice, currentLang }) {
+  const { t } = useT();
   const endRef = useRef(null);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [history, loading]);
 
@@ -38,23 +34,26 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
             <span className="shine-sweep" style={{ animation: "shineSweep 3.5s ease-in-out infinite" }} />
           </div>
           <div className="font-display text-lg font-extrabold mt-4" style={{ color: "var(--text)" }}>
-            Ask KrishiMitra anything
+            {t("chat.ask_anything")}
           </div>
           <div className="text-[12px] mt-1" style={{ color: "var(--text-muted)" }}>
-            Voice or text · Replies in {currentLang.label}
+            {t("chat.voice_or_text", { lang: currentLang.label })}
           </div>
 
           <div className="flex flex-wrap gap-1.5 mt-5 justify-center stagger">
-            {SUGGESTIONS.map((q, i) => (
-              <button key={i} onClick={() => setChatInput(q)}
-                className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all hover:-translate-y-0.5"
-                style={{
-                  background: "var(--primary-soft)", color: "var(--primary)",
-                  border: "1px solid color-mix(in srgb, var(--primary) 28%, transparent)",
-                }}>
-                {q}
-              </button>
-            ))}
+            {SUGGEST_KEYS.map((key, i) => {
+              const q = t(key);
+              return (
+                <button key={i} onClick={() => setChatInput(q)}
+                  className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all hover:-translate-y-0.5"
+                  style={{
+                    background: "var(--primary-soft)", color: "var(--primary)",
+                    border: "1px solid color-mix(in srgb, var(--primary) 28%, transparent)",
+                  }}>
+                  {q}
+                </button>
+              );
+            })}
           </div>
 
           <button
@@ -72,7 +71,7 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
             {voice.listening && <span className="absolute inset-0 rounded-full border-2 pulse-ring" style={{ borderColor: "var(--danger)" }} />}
           </button>
           <div className="text-[11px] mt-2.5" style={{ color: "var(--text-dim)" }}>
-            Tap to speak in {currentLang.label}
+            {t("chat.tap_to_speak", { lang: currentLang.label })}
           </div>
         </Card>
       )}
@@ -103,7 +102,7 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
                 className="mt-2 px-2 py-1 rounded-md text-[10px] font-semibold inline-flex items-center gap-1.5 transition-colors"
                 style={{ background: "var(--primary-soft)", color: "var(--primary)" }}
               >
-                {voice.speaking ? <><Stop size={11} /> Stop</> : <><Volume size={11} /> Listen</>}
+                {voice.speaking ? <><Stop size={11} /> {t("chat.stop")}</> : <><Volume size={11} /> {t("chat.listen")}</>}
               </button>
             )}
 
@@ -124,7 +123,7 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
           <div className="px-3.5 py-2.5 rounded-2xl flex items-center gap-2"
                style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)", color: "var(--primary)" }}>
             <Sparkle size={12} style={{ color: "var(--primary)" }} />
-            <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>KrishiMitra</span>
+            <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>{t("chat.thinking")}</span>
             <TypingDots />
           </div>
         </div>
@@ -150,7 +149,7 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") onSend(); }}
-            placeholder={`Speak or type in ${currentLang.label}…`}
+            placeholder={t("chat.speak_or_type", { lang: currentLang.label })}
             className="input"
           />
           <button onClick={() => onSend()} disabled={loading || !chatInput.trim()}

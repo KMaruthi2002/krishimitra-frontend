@@ -2,8 +2,10 @@ import { Card, Chip, SectionTitle } from "./UI";
 import RiskGauge from "./RiskGauge";
 import AnimatedNumber from "./AnimatedNumber";
 import { Droplet, Calendar, Activity, TrendingUp, Check } from "./Icons";
+import { useT } from "../lib/I18nContext";
 
 export default function IrrigCard({ data }) {
+  const { t } = useT();
   if (!data) return null;
   const a = data.analysis || {};
   const def = a.irrigation_deficit_mm || 0;
@@ -19,11 +21,11 @@ export default function IrrigCard({ data }) {
     <Card className="overflow-hidden card-elev slide-up">
       <div className="px-4 pt-4 pb-3">
         <div className="eyebrow flex items-center gap-1.5" style={{ color: "var(--text-dim)" }}>
-          <Droplet size={11} /> Irrigation
+          <Droplet size={11} /> {t("irrig.irrigation")}
         </div>
-        <div className="font-display text-lg font-extrabold mt-1">{data.crop} water plan</div>
+        <div className="font-display text-lg font-extrabold mt-1">{t("irrig.water_plan", { crop: data.crop })}</div>
         <div className="mt-1.5 flex gap-1.5 flex-wrap">
-          {data.growth_stage && <Chip tone="sky">{data.growth_stage.replace(/_/g, " ")}</Chip>}
+          {data.growth_stage && <Chip tone="sky">{t(`stage.${data.growth_stage}`)}</Chip>}
           {data.et0 && <Chip>ET₀ {data.et0} mm/d</Chip>}
         </div>
       </div>
@@ -34,7 +36,7 @@ export default function IrrigCard({ data }) {
           <div className="rounded-xl p-3 card-interactive" style={{ background: "var(--sky-soft)", border: "1px solid color-mix(in srgb, var(--sky) 25%, transparent)" }}>
             <div className="flex items-center gap-1.5">
               <Droplet size={11} style={{ color: "var(--sky)" }} />
-              <div className="eyebrow" style={{ color: "var(--sky)" }}>Need</div>
+              <div className="eyebrow" style={{ color: "var(--sky)" }}>{t("irrig.need")}</div>
             </div>
             <div className="mt-1 flex items-baseline gap-1">
               <span className="font-display text-2xl font-extrabold metric-num" style={{ color: "var(--sky)" }}>
@@ -50,7 +52,7 @@ export default function IrrigCard({ data }) {
           }}>
             <div className="flex items-center gap-1.5">
               <TrendingUp size={11} style={{ color: toneColor }} />
-              <div className="eyebrow" style={{ color: toneColor }}>Deficit</div>
+              <div className="eyebrow" style={{ color: toneColor }}>{t("irrig.deficit")}</div>
             </div>
             <div className="mt-1 flex items-baseline gap-1">
               <span className="font-display text-2xl font-extrabold metric-num" style={{ color: toneColor }}>
@@ -62,7 +64,7 @@ export default function IrrigCard({ data }) {
 
           <RiskGauge
             value={sufficiency}
-            label="Sufficiency"
+            label={t("irrig.sufficiency")}
             tone={sufficiency > 0.7 ? "emerald" : sufficiency > 0.4 ? "amber" : "danger"}
           />
         </div>
@@ -80,7 +82,7 @@ export default function IrrigCard({ data }) {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Calendar size={13} style={{ color: "var(--primary)" }} />
-              <SectionTitle>Daily schedule</SectionTitle>
+              <SectionTitle>{t("irrig.daily_schedule")}</SectionTitle>
             </div>
             <div className="space-y-1.5">
               {data.daily_schedule.slice(0, 7).map((d, i) => {
@@ -100,7 +102,7 @@ export default function IrrigCard({ data }) {
                     </span>
                     <span className="metric-num" style={{ color: "var(--text-dim)" }}>{d.rain_mm}mm</span>
                     <span className="flex-1 font-semibold metric-num" style={{ color: needs ? "var(--sky)" : "var(--primary)" }}>
-                      {needs ? `Irrigate ${d.irrigate_mm}mm` : "No irrigation needed"}
+                      {needs ? t("irrig.irrigate_mm", { mm: d.irrigate_mm }) : t("irrig.no_irrigation")}
                     </span>
                   </div>
                 );

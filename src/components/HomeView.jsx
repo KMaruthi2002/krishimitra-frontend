@@ -2,51 +2,53 @@ import { Card } from "./UI";
 import Hero from "./Hero";
 import WeatherWidget from "./WeatherWidget";
 import { Wheat, Shield, Beaker, Droplet, Chat, ArrowRight, Mic, Sparkle } from "./Icons";
+import { useT } from "../lib/I18nContext";
 
 const TILES = [
-  { id: "crop",  title: "Crop Advisor",   subtitle: "Best plants for your soil + season", Icon: Wheat,
+  { id: "crop",  titleKey: "home.crop_advisor.title", subKey: "home.crop_advisor.subtitle", Icon: Wheat,
     grad: "linear-gradient(135deg, var(--primary-600), var(--primary-800))",
     soft: "color-mix(in srgb, var(--primary) 10%, var(--surface))", fg: "var(--primary)" },
-  { id: "pest",  title: "Pest Guard",     subtitle: "Threat detection + spray windows",   Icon: Shield,
+  { id: "pest",  titleKey: "home.pest_guard.title",   subKey: "home.pest_guard.subtitle",   Icon: Shield,
     grad: "linear-gradient(135deg, #d97706, #92400e)",
     soft: "color-mix(in srgb, var(--accent) 10%, var(--surface))", fg: "var(--accent)" },
-  { id: "fert",  title: "Fertilizer",     subtitle: "Rain-aware NPK schedule",            Icon: Beaker,
+  { id: "fert",  titleKey: "home.fertilizer.title",   subKey: "home.fertilizer.subtitle",   Icon: Beaker,
     grad: "linear-gradient(135deg, #7c3aed, #4c1d95)",
     soft: "color-mix(in srgb, var(--violet) 10%, var(--surface))", fg: "var(--violet)" },
-  { id: "water", title: "Irrigation",     subtitle: "Daily deficit + water plan",         Icon: Droplet,
+  { id: "water", titleKey: "home.irrigation.title",   subKey: "home.irrigation.subtitle",   Icon: Droplet,
     grad: "linear-gradient(135deg, var(--sky-600), #075985)",
     soft: "color-mix(in srgb, var(--sky) 10%, var(--surface))", fg: "var(--sky)" },
 ];
 
 export default function HomeView({ weather, onTab, currentLang }) {
+  const { t } = useT();
   return (
     <div className="space-y-3 fade-up">
       <Hero weather={weather} />
       {weather && <WeatherWidget data={weather} />}
 
       <div className="grid grid-cols-2 gap-2.5 stagger">
-        {TILES.map((t) => (
+        {TILES.map((tile) => (
           <button
-            key={t.id}
-            onClick={() => onTab(t.id)}
+            key={tile.id}
+            onClick={() => onTab(tile.id)}
             className="text-left rounded-2xl p-4 transition-all active:scale-[0.98] hover:-translate-y-1 group card-interactive"
-            style={{ background: t.soft, border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}
+            style={{ background: tile.soft, border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}
           >
             <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
-                 style={{ background: t.grad, boxShadow: "var(--shadow-sm)" }}>
-              <t.Icon size={18} />
+                 style={{ background: tile.grad, boxShadow: "var(--shadow-sm)" }}>
+              <tile.Icon size={18} />
             </div>
             <div className="mt-3 font-display text-[15px] font-extrabold leading-tight" style={{ color: "var(--text)" }}>
-              {t.title}
+              {t(tile.titleKey)}
             </div>
             <div className="text-[11px] mt-1 leading-snug" style={{ color: "var(--text-muted)" }}>
-              {t.subtitle}
+              {t(tile.subKey)}
             </div>
             <div className="mt-3 inline-flex items-center gap-1 text-[11px] font-bold transition-all"
-                 style={{ color: t.fg, opacity: 0 }}
+                 style={{ color: tile.fg, opacity: 0 }}
                  onMouseEnter={(e) => (e.currentTarget.style.opacity = 1)}
                  onMouseLeave={(e) => (e.currentTarget.style.opacity = 0)}>
-              Open <ArrowRight size={12} />
+              {t("home.open")} <ArrowRight size={12} />
             </div>
           </button>
         ))}
@@ -60,11 +62,11 @@ export default function HomeView({ weather, onTab, currentLang }) {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <div className="font-display text-sm font-bold" style={{ color: "var(--text)" }}>Ask KrishiMitra</div>
-              <span className="chip chip-emerald chip-dot">AI</span>
+              <div className="font-display text-sm font-bold" style={{ color: "var(--text)" }}>{t("home.ask_title")}</div>
+              <span className="chip chip-emerald chip-dot">{t("home.ai_badge")}</span>
             </div>
             <div className="text-[11px] mt-0.5" style={{ color: "var(--text-muted)" }}>
-              Voice &amp; text in {currentLang.label} — personalised advice in seconds
+              {t("home.ask_subtitle", { lang: currentLang.label })}
             </div>
           </div>
           <div style={{ color: "var(--primary)" }}><Mic size={18} /></div>
@@ -73,7 +75,7 @@ export default function HomeView({ weather, onTab, currentLang }) {
 
       <div className="pt-2 px-1 flex items-center justify-between text-[10px]" style={{ color: "var(--text-dim)" }}>
         <div className="flex items-center gap-1.5">
-          <Sparkle size={10} /> Powered by Open-Meteo, FastAPI, XGBoost
+          <Sparkle size={10} /> {t("home.powered_by")}
         </div>
         <div>v2.0</div>
       </div>

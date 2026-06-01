@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { LANGUAGES, LOCATIONS } from "../lib/constants";
 import { Leaf, Globe, Volume, VolumeX, Sun, Moon, ChevronDown, MapPin } from "./Icons";
+import { useT } from "../lib/I18nContext";
 
 function LocationPicker({ loc, setLoc }) {
+  const { t } = useT();
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("");
 
@@ -44,7 +46,7 @@ function LocationPicker({ loc, setLoc }) {
                 value={filter}
                 autoFocus
                 onChange={(e) => setFilter(e.target.value)}
-                placeholder="Search location…"
+                placeholder={t("header.search_location")}
                 className="w-full pl-7 pr-2 py-1.5 text-[12px] font-medium rounded-lg"
                 style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--text)", outline: "none" }}
               />
@@ -52,7 +54,7 @@ function LocationPicker({ loc, setLoc }) {
           </div>
           <div className="max-h-[280px] overflow-y-auto py-1 stagger">
             {matches.length === 0 && (
-              <div className="px-3 py-3 text-[11px]" style={{ color: "var(--text-dim)" }}>No matches</div>
+              <div className="px-3 py-3 text-[11px]" style={{ color: "var(--text-dim)" }}>{t("header.no_matches")}</div>
             )}
             {matches.map((l) => {
               const active = l === loc;
@@ -70,7 +72,7 @@ function LocationPicker({ loc, setLoc }) {
                 >
                   <MapPin size={13} style={{ color: active ? "var(--primary)" : "var(--text-dim)" }} />
                   <span className="flex-1">{l}</span>
-                  {active && <span className="text-[10px] font-bold" style={{ color: "var(--primary)" }}>SELECTED</span>}
+                  {active && <span className="text-[10px] font-bold" style={{ color: "var(--primary)" }}>{t("header.selected")}</span>}
                 </button>
               );
             })}
@@ -82,6 +84,7 @@ function LocationPicker({ loc, setLoc }) {
 }
 
 export default function Header({ lang, setLang, voiceEnabled, setVoiceEnabled, onSpeakGreeting, theme, setTheme, loc, setLoc }) {
+  const { t } = useT();
   const [open, setOpen] = useState(false);
   const current = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
@@ -105,9 +108,9 @@ export default function Header({ lang, setLang, voiceEnabled, setVoiceEnabled, o
           <div className="min-w-0 hidden xs:block">
             <h1 className="font-display text-[17px] font-extrabold tracking-tight leading-none">KrishiMitra</h1>
             <div className="hidden sm:flex items-center gap-1.5 mt-1">
-              <span className="text-[10px] font-semibold uppercase tracking-[.16em]" style={{ color: "var(--text-dim)" }}>कृषि मित्र</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[.16em]" style={{ color: "var(--text-dim)" }}>{t("brand.kana")}</span>
               <span className="w-1 h-1 rounded-full" style={{ background: "var(--text-faint)" }} />
-              <span className="text-[10px] font-semibold uppercase tracking-[.12em]" style={{ color: "var(--text-dim)" }}>Farming advisor</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[.12em]" style={{ color: "var(--text-dim)" }}>{t("brand.subtitle")}</span>
             </div>
           </div>
         </div>
@@ -147,7 +150,7 @@ export default function Header({ lang, setLang, voiceEnabled, setVoiceEnabled, o
                         {l.flag}
                       </span>
                       <span className="text-sm font-semibold flex-1">{l.label}</span>
-                      {active && <span className="text-[10px] font-bold" style={{ color: "var(--primary)" }}>SELECTED</span>}
+                      {active && <span className="text-[10px] font-bold" style={{ color: "var(--primary)" }}>{t("header.selected")}</span>}
                     </button>
                   );
                 })}
