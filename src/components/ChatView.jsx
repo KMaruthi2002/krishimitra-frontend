@@ -49,7 +49,7 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
               <button key={i} onClick={() => setChatInput(q)}
                 className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all hover:-translate-y-0.5"
                 style={{
-                  background: "var(--primary-soft)", color: "var(--primary-700)",
+                  background: "var(--primary-soft)", color: "var(--primary)",
                   border: "1px solid color-mix(in srgb, var(--primary) 28%, transparent)",
                 }}>
                 {q}
@@ -90,7 +90,7 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
             {m.role === "agent" && (
               <div className="flex items-center gap-1.5 mb-1.5 -mt-0.5">
                 <Sparkle size={12} style={{ color: "var(--primary)" }} />
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--primary-700)" }}>
+                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--primary)" }}>
                   KrishiMitra
                 </span>
               </div>
@@ -101,7 +101,7 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
               <button
                 onClick={() => voice.speaking ? voice.stopSpeaking() : voice.speak(m.text)}
                 className="mt-2 px-2 py-1 rounded-md text-[10px] font-semibold inline-flex items-center gap-1.5 transition-colors"
-                style={{ background: "var(--primary-soft)", color: "var(--primary-700)" }}
+                style={{ background: "var(--primary-soft)", color: "var(--primary)" }}
               >
                 {voice.speaking ? <><Stop size={11} /> Stop</> : <><Volume size={11} /> Listen</>}
               </button>
@@ -119,7 +119,7 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
       {loading && (
         <div className="flex justify-start fade-in">
           <div className="px-3.5 py-2.5 rounded-2xl flex items-center gap-2"
-               style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)", color: "var(--primary-700)" }}>
+               style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)", color: "var(--primary)" }}>
             <Sparkle size={12} style={{ color: "var(--primary)" }} />
             <span className="text-sm font-semibold" style={{ color: "var(--text-muted)" }}>KrishiMitra</span>
             <TypingDots />
@@ -136,7 +136,7 @@ export default function ChatView({ history, loading, chatInput, setChatInput, on
             style={{
               background: voice.listening ? "var(--danger)" : "var(--surface)",
               border: `1px solid ${voice.listening ? "var(--danger)" : "var(--border)"}`,
-              color: voice.listening ? "#fff" : "var(--primary-700)",
+              color: voice.listening ? "#fff" : "var(--primary)",
             }}
             aria-label={voice.listening ? "Stop listening" : "Voice input"}
           >

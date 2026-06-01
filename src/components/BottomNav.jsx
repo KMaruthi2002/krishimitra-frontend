@@ -41,8 +41,8 @@ export default function BottomNav({ tab, onChange }) {
               aria-label={t.label}
               aria-current={active ? "page" : undefined}
             >
-              <Icon size={20} style={{ color: active ? "var(--primary-700)" : "var(--text-dim)", transition: "color .25s ease, transform .25s var(--ease-spring)", transform: active ? "scale(1.08)" : "scale(1)" }} />
-              <span className="text-[10px] font-bold tracking-wide" style={{ color: active ? "var(--primary-700)" : "var(--text-dim)" }}>
+              <Icon size={20} style={{ color: active ? "var(--primary)" : "var(--text-dim)", transition: "color .25s ease, transform .25s var(--ease-spring)", transform: active ? "scale(1.08)" : "scale(1)" }} />
+              <span className="text-[10px] font-bold tracking-wide" style={{ color: active ? "var(--primary)" : "var(--text-dim)" }}>
                 {t.label}
               </span>
             </button>
@@ -68,7 +68,7 @@ export function SideNav({ tab, onChange }) {
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-left relative"
             style={{
               background: active ? "var(--primary-soft)" : "transparent",
-              color: active ? "var(--primary-700)" : "var(--text-muted)",
+              color: active ? "var(--primary)" : "var(--text-muted)",
               transition: "background .25s ease, color .25s ease",
             }}
             onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = "var(--hover)"; }}

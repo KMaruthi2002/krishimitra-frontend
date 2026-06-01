@@ -6,7 +6,7 @@ import { Wheat, Shield, Beaker, Droplet, Chat, ArrowRight, Mic, Sparkle } from "
 const TILES = [
   { id: "crop",  title: "Crop Advisor",   subtitle: "Best plants for your soil + season", Icon: Wheat,
     grad: "linear-gradient(135deg, var(--primary-600), var(--primary-800))",
-    soft: "color-mix(in srgb, var(--primary) 10%, var(--surface))", fg: "var(--primary-700)" },
+    soft: "color-mix(in srgb, var(--primary) 10%, var(--surface))", fg: "var(--primary)" },
   { id: "pest",  title: "Pest Guard",     subtitle: "Threat detection + spray windows",   Icon: Shield,
     grad: "linear-gradient(135deg, #d97706, #92400e)",
     soft: "color-mix(in srgb, var(--accent) 10%, var(--surface))", fg: "var(--accent)" },
@@ -55,7 +55,7 @@ export default function HomeView({ weather, onTab, currentLang }) {
       <Card className="card-interactive">
         <button onClick={() => onTab("chat")} className="w-full text-left p-4 flex items-center gap-3 rounded-[14px]">
           <div className="w-11 h-11 rounded-xl flex items-center justify-center"
-               style={{ background: "var(--primary-soft)", color: "var(--primary-700)" }}>
+               style={{ background: "var(--primary-soft)", color: "var(--primary)" }}>
             <Chat size={20} />
           </div>
           <div className="flex-1 min-w-0">
@@ -67,7 +67,7 @@ export default function HomeView({ weather, onTab, currentLang }) {
               Voice &amp; text in {currentLang.label} — personalised advice in seconds
             </div>
           </div>
-          <div style={{ color: "var(--primary-700)" }}><Mic size={18} /></div>
+          <div style={{ color: "var(--primary)" }}><Mic size={18} /></div>
         </button>
       </Card>
 

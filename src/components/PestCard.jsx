@@ -82,7 +82,7 @@ export default function PestCard({ data }) {
                      style={{
                        background: w.safe ? "var(--primary-soft)" : "var(--danger-soft)",
                        border: `1px solid ${w.safe ? "color-mix(in srgb, var(--primary) 25%, transparent)" : "color-mix(in srgb, var(--danger) 25%, transparent)"}`,
-                       color: w.safe ? "var(--primary-700)" : "var(--danger)",
+                       color: w.safe ? "var(--primary)" : "var(--danger)",
                      }}>
                   <div className="text-[10px] font-bold uppercase tracking-wide">{w.day?.slice(0, 3)}</div>
                   <div className="mt-1 flex justify-center">{w.safe ? <Check size={14} /> : <X size={14} />}</div>

@@ -199,7 +199,7 @@ button:focus-visible, a:focus-visible { box-shadow: var(--ring); }
   background: var(--surface-2); color: var(--text-muted);
   border: 1px solid var(--border);
 }
-.chip-emerald { background: var(--primary-soft); color: var(--primary-700); border-color: color-mix(in srgb, var(--primary) 30%, transparent); }
+.chip-emerald { background: var(--primary-soft); color: var(--primary); border-color: color-mix(in srgb, var(--primary) 30%, transparent); }
 .chip-amber   { background: var(--accent-soft);  color: var(--accent);      border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
 .chip-sky     { background: var(--sky-soft);     color: var(--sky);         border-color: color-mix(in srgb, var(--sky) 30%, transparent); }
 .chip-violet  { background: var(--violet-soft);  color: var(--violet);      border-color: color-mix(in srgb, var(--violet) 30%, transparent); }

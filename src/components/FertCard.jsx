@@ -26,7 +26,7 @@ export default function FertCard({ data }) {
             <div className="w-12 h-12 rounded-xl flex flex-col items-center justify-center font-display"
                  style={{
                    background: f.safe_to_apply ? "var(--primary-soft)" : "var(--danger-soft)",
-                   color: f.safe_to_apply ? "var(--primary-700)" : "var(--danger)",
+                   color: f.safe_to_apply ? "var(--primary)" : "var(--danger)",
                  }}>
               <div className="text-[8px] font-bold">NPK</div>
               <div className="text-[10px] font-extrabold metric-num leading-tight">{f.npk.join("-")}</div>
@@ -55,7 +55,7 @@ export default function FertCard({ data }) {
                 const skip  = d.action.includes("SKIP");
                 const bg = apply ? "var(--primary-soft)" : skip ? "var(--danger-soft)" : "var(--surface-2)";
                 const bd = apply ? "color-mix(in srgb, var(--primary) 25%, transparent)" : skip ? "color-mix(in srgb, var(--danger) 25%, transparent)" : "var(--border)";
-                const fg = apply ? "var(--primary-700)" : skip ? "var(--danger)" : "var(--text-muted)";
+                const fg = apply ? "var(--primary)" : skip ? "var(--danger)" : "var(--text-muted)";
                 return (
                   <div key={i} className="flex items-center gap-2 py-2 px-3 rounded-lg text-xs"
                        style={{ background: bg, border: `1px solid ${bd}`, animation: `fadeUp .35s ${i * 60}ms var(--ease-smooth) both` }}>

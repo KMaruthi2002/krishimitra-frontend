@@ -52,7 +52,7 @@ export default function Header({ lang, setLang, voiceEnabled, setVoiceEnabled, o
                     <button key={l.code}
                       onClick={() => { setLang(l.code); setOpen(false); onSpeakGreeting?.(l); }}
                       className="px-3 py-2 rounded-lg text-left flex items-center gap-2.5 transition-colors"
-                      style={{ background: active ? "var(--primary-soft)" : "transparent", color: active ? "var(--primary-700)" : "var(--text)" }}
+                      style={{ background: active ? "var(--primary-soft)" : "transparent", color: active ? "var(--primary)" : "var(--text)" }}
                       onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = "var(--hover)"; }}
                       onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = "transparent"; }}
                     >

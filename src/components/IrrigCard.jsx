@@ -99,7 +99,7 @@ export default function IrrigCard({ data }) {
                       {d.day?.slice(0, 3)} {d.date?.slice(5)}
                     </span>
                     <span className="metric-num" style={{ color: "var(--text-dim)" }}>{d.rain_mm}mm</span>
-                    <span className="flex-1 font-semibold metric-num" style={{ color: needs ? "var(--sky)" : "var(--primary-700)" }}>
+                    <span className="flex-1 font-semibold metric-num" style={{ color: needs ? "var(--sky)" : "var(--primary)" }}>
                       {needs ? `Irrigate ${d.irrigate_mm}mm` : "No irrigation needed"}
                     </span>
                   </div>
