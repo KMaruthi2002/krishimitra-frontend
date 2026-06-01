@@ -105,9 +105,9 @@ export default function Header({ lang, setLang, voiceEnabled, setVoiceEnabled, o
                         boxShadow: "0 10px 22px -10px color-mix(in srgb, var(--primary) 60%, transparent), inset 0 1px 0 rgba(255,255,255,.15)" }}>
             <Leaf size={20} />
           </div>
-          <div className="min-w-0 hidden xs:block">
-            <h1 className="font-display text-[17px] font-extrabold tracking-tight leading-none">KrishiMitra</h1>
-            <div className="hidden sm:flex items-center gap-1.5 mt-1">
+          <div className="min-w-0 hidden sm:block">
+            <h1 className="font-display text-[17px] font-extrabold tracking-tight leading-none" style={{ color: "var(--text)" }}>KrishiMitra</h1>
+            <div className="flex items-center gap-1.5 mt-1">
               <span className="text-[10px] font-semibold uppercase tracking-[.16em]" style={{ color: "var(--text-dim)" }}>{t("brand.kana")}</span>
               <span className="w-1 h-1 rounded-full" style={{ background: "var(--text-faint)" }} />
               <span className="text-[10px] font-semibold uppercase tracking-[.12em]" style={{ color: "var(--text-dim)" }}>{t("brand.subtitle")}</span>

@@ -81,7 +81,12 @@ export function SideNav({ tab, onChange }) {
           >
             {active && <span style={{ position: "absolute", left: 0, top: 8, bottom: 8, width: 3, background: "var(--primary)", borderRadius: 999 }} />}
             <Icon size={18} />
-            <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "inherit" }}>
+            <span style={{
+              flex: 1, minWidth: 0,
+              fontSize: 14, fontWeight: 600,
+              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              color: active ? "var(--primary)" : "var(--text-muted)",
+            }}>
               {t(tab_.labelKey)}
             </span>
           </button>
